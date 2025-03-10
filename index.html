@@ -5,185 +5,174 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>เครื่องคำนวณเปรียบเทียบราคา</title>
   <style>
-    /* Minimal Pastel Design */
+    /* Compact Design */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
       font-family: 'Prompt', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 14px;
     }
     
     body {
       background-color: #f8f9fa;
       color: #4a5568;
-      padding: 16px;
       min-height: 100vh;
+      padding: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     
     .container {
-      max-width: 600px;
+      max-width: 100%;
       width: 100%;
       background-color: #fff;
-      border-radius: 16px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-      padding: 24px 16px;
-      margin: 0 auto;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
     
     h1 {
       color: #718096;
-      font-size: 1.3rem;
+      font-size: 16px;
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 8px;
       font-weight: 500;
     }
     
     .comparison-form {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      margin-bottom: 20px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
     }
     
     .item-card {
       background-color: #f7fafc;
-      border-radius: 12px;
-      padding: 16px;
+      border-radius: 8px;
+      padding: 8px;
       border: 1px solid #edf2f7;
     }
     
     .item-card h2 {
       color: #81a1c1;
-      font-size: 1.1rem;
-      margin-bottom: 12px;
+      font-size: 14px;
+      margin-bottom: 8px;
       font-weight: 500;
     }
     
     .form-group {
-      margin-bottom: 12px;
+      margin-bottom: 8px;
     }
     
-    .form-row {
+    .input-label {
       display: flex;
-      gap: 10px;
+      gap: 4px;
+      align-items: center;
+      margin-bottom: 4px;
     }
     
-    .form-row .form-group {
-      flex: 1;
-    }
-    
-    label {
-      display: block;
-      margin-bottom: 6px;
+    .input-label label {
       color: #718096;
-      font-size: 0.9rem;
+      font-size: 12px;
+      white-space: nowrap;
     }
     
     input {
       width: 100%;
-      padding: 12px 10px;
+      padding: 6px 8px;
       border: 1px solid #e2e8f0;
-      border-radius: 8px;
-      font-size: 1rem;
+      border-radius: 6px;
+      font-size: 12px;
       background-color: #fff;
-      transition: all 0.2s;
-      -webkit-appearance: none;
-    }
-    
-    input:focus {
-      outline: none;
-      border-color: #a3bffa;
-      box-shadow: 0 0 0 3px rgba(163, 191, 250, 0.2);
     }
     
     button {
       width: 100%;
-      padding: 14px;
+      padding: 8px;
       background-color: #b5c7e3;
       color: #2d3748;
       border: none;
-      border-radius: 8px;
-      font-size: 1rem;
+      border-radius: 6px;
+      font-size: 14px;
       cursor: pointer;
-      transition: all 0.2s;
       font-weight: 500;
-      -webkit-appearance: none;
     }
     
-    button:hover, button:active {
+    button:hover {
       background-color: #a3bffa;
     }
     
     .results {
-      margin-top: 20px;
-      padding: 16px;
-      border-radius: 12px;
+      padding: 8px;
+      border-radius: 8px;
       background-color: #f7fafc;
-      display: none;
       border: 1px solid #edf2f7;
-      scroll-margin-top: 20px;
+      display: none;
     }
     
     .results h2 {
       color: #81a1c1;
-      font-size: 1.1rem;
-      margin-bottom: 12px;
+      font-size: 14px;
+      margin-bottom: 8px;
       font-weight: 500;
     }
     
     .result-card {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      margin-bottom: 16px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 8px;
     }
     
     .result-item {
-      flex: 1;
-      padding: 14px;
+      padding: 8px;
       background-color: #fff;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      border-radius: 6px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+      font-size: 12px;
     }
     
     .result-item p {
-      margin-bottom: 6px;
-      font-size: 0.95rem;
+      margin-bottom: 4px;
+      font-size: 12px;
     }
     
     .result-item p:first-child {
       font-weight: 500;
-      color: #4a5568;
     }
     
     .winner {
-      padding: 12px;
+      padding: 8px;
       background-color: #e6fffa;
       color: #319795;
-      border-radius: 8px;
+      border-radius: 6px;
       text-align: center;
       font-weight: 500;
-      margin-top: 16px;
+      margin-top: 8px;
       animation: fadeInUp 0.5s ease-out forwards;
     }
     
     .draw {
-      padding: 12px;
+      padding: 8px;
       background-color: #fff8dc;
       color: #d69e2e;
-      border-radius: 8px;
+      border-radius: 6px;
       text-align: center;
       font-weight: 500;
-      margin-top: 16px;
+      margin-top: 8px;
       animation: fadeInUp 0.5s ease-out forwards;
     }
     
     .progress-container {
       width: 100%;
       background-color: #edf2f7;
-      border-radius: 8px;
-      margin-top: 16px;
-      height: 12px;
+      border-radius: 6px;
+      margin-top: 8px;
+      height: 8px;
       overflow: hidden;
       position: relative;
     }
@@ -192,9 +181,8 @@
       height: 100%;
       background-color: #9ae6b4;
       width: 0%;
-      border-radius: 8px;
       position: relative;
-      transition: width 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transition: width 1s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
     
     .progress-bar::before {
@@ -214,18 +202,6 @@
       animation: progress-shine 2s linear infinite;
     }
     
-    .progress-value {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 10px;
-      font-weight: 600;
-      color: #4a5568;
-      z-index: 1;
-      text-shadow: 0 0 2px #fff;
-    }
-    
     @keyframes progress-shine {
       from {
         background-position: 200% 0;
@@ -238,7 +214,7 @@
     @keyframes fadeInUp {
       from {
         opacity: 0;
-        transform: translateY(20px);
+        transform: translateY(10px);
       }
       to {
         opacity: 1;
@@ -246,21 +222,14 @@
       }
     }
     
-    /* Animated pulse for winner box */
-    .winner.pulse {
-      animation: pulsate 2s infinite;
+    /* Compact form layout for mobile */
+    .form-row {
+      display: flex;
+      gap: 6px;
     }
     
-    @keyframes pulsate {
-      0% {
-        box-shadow: 0 0 0 0 rgba(49, 151, 149, 0.4);
-      }
-      70% {
-        box-shadow: 0 0 0 8px rgba(49, 151, 149, 0);
-      }
-      100% {
-        box-shadow: 0 0 0 0 rgba(49, 151, 149, 0);
-      }
+    .form-row .form-group {
+      flex: 1;
     }
     
     /* Loader */
@@ -280,39 +249,39 @@
     .loader {
       display: inline-block;
       position: relative;
-      width: 64px;
-      height: 64px;
+      width: 40px;
+      height: 40px;
     }
     
     .loader div {
       position: absolute;
-      top: 27px;
-      width: 11px;
-      height: 11px;
+      top: 15px;
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
       animation-timing-function: cubic-bezier(0, 1, 1, 0);
     }
     
     .loader div:nth-child(1) {
-      left: 6px;
+      left: 4px;
       background-color: #fbd38d;
       animation: loader1 0.6s infinite;
     }
     
     .loader div:nth-child(2) {
-      left: 6px;
+      left: 4px;
       background-color: #9ae6b4;
       animation: loader2 0.6s infinite;
     }
     
     .loader div:nth-child(3) {
-      left: 26px;
+      left: 16px;
       background-color: #b5c7e3;
       animation: loader2 0.6s infinite;
     }
     
     .loader div:nth-child(4) {
-      left: 45px;
+      left: 28px;
       background-color: #f687b3;
       animation: loader3 0.6s infinite;
     }
@@ -324,7 +293,7 @@
     
     @keyframes loader2 {
       0% { transform: translate(0, 0); }
-      100% { transform: translate(19px, 0); }
+      100% { transform: translate(12px, 0); }
     }
     
     @keyframes loader3 {
@@ -332,48 +301,19 @@
       100% { transform: scale(0); }
     }
     
-    /* Responsive styles for mobile */
-    @media (min-width: 641px) {
-      .container {
-        padding: 32px;
-      }
-      
-      .comparison-form {
-        flex-direction: row;
-      }
-      
-      .item-card {
-        flex: 1;
-      }
-      
-      .result-card {
-        flex-direction: row;
-      }
+    #progress-value {
+      position: absolute;
+      right: 4px;
+      top: -5px;
+      font-size: 10px;
+      color: #4a5568;
+      background: rgba(255, 255, 255, 0.7);
+      padding: 0 4px;
+      border-radius: 8px;
     }
     
-    /* Add floating button for recalculation when scrolled down */
-    .recalculate-btn {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      background-color: #81a1c1;
-      color: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      cursor: pointer;
-      z-index: 10;
-      display: none;
-      font-size: 20px;
-      transition: transform 0.2s;
-    }
-    
-    .recalculate-btn:active {
-      transform: scale(0.95);
+    .hide-when-results {
+      transition: height 0.3s ease-out;
     }
   </style>
 </head>
@@ -393,38 +333,54 @@
     <div class="comparison-form">
       <div class="item-card">
         <h2>สินค้าที่ 1</h2>
-        <div class="form-group">
-          <label for="weight1">น้ำหนัก (กรัม)</label>
-          <input type="number" id="weight1" placeholder="น้ำหนัก" min="0" step="0.01" inputmode="decimal">
+        <div class="form-row">
+          <div class="form-group">
+            <div class="input-label">
+              <label for="weight1">น้ำหนัก(ก.)</label>
+            </div>
+            <input type="number" id="weight1" placeholder="น้ำหนัก" min="0" step="0.01">
+          </div>
+          <div class="form-group">
+            <div class="input-label">
+              <label for="quantity1">จำนวน</label>
+            </div>
+            <input type="number" id="quantity1" placeholder="จำนวน" value="1" min="1" step="1">
+          </div>
         </div>
         <div class="form-group">
-          <label for="quantity1">ปริมาณ (ชิ้น)</label>
-          <input type="number" id="quantity1" placeholder="ปริมาณ" value="1" min="1" step="1" inputmode="numeric">
-        </div>
-        <div class="form-group">
-          <label for="price1">ราคา (บาท)</label>
-          <input type="number" id="price1" placeholder="ราคา" min="0" step="0.01" inputmode="decimal">
+          <div class="input-label">
+            <label for="price1">ราคา(บาท)</label>
+          </div>
+          <input type="number" id="price1" placeholder="ราคา" min="0" step="0.01">
         </div>
       </div>
       
       <div class="item-card">
         <h2>สินค้าที่ 2</h2>
-        <div class="form-group">
-          <label for="weight2">น้ำหนัก (กรัม)</label>
-          <input type="number" id="weight2" placeholder="น้ำหนัก" min="0" step="0.01" inputmode="decimal">
+        <div class="form-row">
+          <div class="form-group">
+            <div class="input-label">
+              <label for="weight2">น้ำหนัก(ก.)</label>
+            </div>
+            <input type="number" id="weight2" placeholder="น้ำหนัก" min="0" step="0.01">
+          </div>
+          <div class="form-group">
+            <div class="input-label">
+              <label for="quantity2">จำนวน</label>
+            </div>
+            <input type="number" id="quantity2" placeholder="จำนวน" value="1" min="1" step="1">
+          </div>
         </div>
         <div class="form-group">
-          <label for="quantity2">ปริมาณ (ชิ้น)</label>
-          <input type="number" id="quantity2" placeholder="ปริมาณ" value="1" min="1" step="1" inputmode="numeric">
-        </div>
-        <div class="form-group">
-          <label for="price2">ราคา (บาท)</label>
-          <input type="number" id="price2" placeholder="ราคา" min="0" step="0.01" inputmode="decimal">
+          <div class="input-label">
+            <label for="price2">ราคา(บาท)</label>
+          </div>
+          <input type="number" id="price2" placeholder="ราคา" min="0" step="0.01">
         </div>
       </div>
     </div>
     
-    <button onclick="calculateComparison()">เปรียบเทียบราคา</button>
+    <button onclick="calculateComparison()" id="compare-button">เปรียบเทียบราคา</button>
     
     <div class="results" id="results">
       <h2>ผลการเปรียบเทียบ</h2>
@@ -437,12 +393,10 @@
       <div id="winner-result"></div>
       <div id="progress-container" class="progress-container" style="display: none;">
         <div id="progress-bar" class="progress-bar"></div>
-        <div id="progress-value" class="progress-value">0%</div>
+        <div id="progress-value">0%</div>
       </div>
     </div>
   </div>
-  
-  <div class="recalculate-btn" id="recalculate-btn" onclick="scrollToTop()">↑</div>
 
   <script>
     function showLoader() {
@@ -460,11 +414,11 @@
       // Simulate loading time
       setTimeout(() => {
         // Get input values
-        const weight1 = parseFloat(document.getElementById('weight1').value) || 0;
+        const weight1 = parseFloat(document.getElementById('weight1').value) || 1;
         const quantity1 = parseInt(document.getElementById('quantity1').value) || 1;
         const price1 = parseFloat(document.getElementById('price1').value) || 0;
         
-        const weight2 = parseFloat(document.getElementById('weight2').value) || 0;
+        const weight2 = parseFloat(document.getElementById('weight2').value) || 1;
         const quantity2 = parseInt(document.getElementById('quantity2').value) || 1;
         const price2 = parseFloat(document.getElementById('price2').value) || 0;
         
@@ -475,19 +429,19 @@
         const unitPrice1 = totalWeight1 > 0 ? price1 / totalWeight1 : 0;
         const unitPrice2 = totalWeight2 > 0 ? price2 / totalWeight2 : 0;
         
-        // Display results with 4 decimal places
+        // Display results with 2 decimal places to save space
         document.getElementById('item1-result').innerHTML = `
           <p>สินค้าที่ 1</p>
-          <p>น้ำหนักรวม: ${totalWeight1.toFixed(2)} กรัม</p>
-          <p>ราคารวม: ${price1.toFixed(2)} บาท</p>
-          <p>ราคาต่อกรัม: ${unitPrice1.toFixed(4)} บาท</p>
+          <p>น้ำหนัก: ${totalWeight1.toFixed(1)} ก.</p>
+          <p>ราคารวม: ${price1.toFixed(1)} บ.</p>
+          <p>ราคา/ก.: ${unitPrice1.toFixed(2)} บ.</p>
         `;
         
         document.getElementById('item2-result').innerHTML = `
           <p>สินค้าที่ 2</p>
-          <p>น้ำหนักรวม: ${totalWeight2.toFixed(2)} กรัม</p>
-          <p>ราคารวม: ${price2.toFixed(2)} บาท</p>
-          <p>ราคาต่อกรัม: ${unitPrice2.toFixed(4)} บาท</p>
+          <p>น้ำหนัก: ${totalWeight2.toFixed(1)} ก.</p>
+          <p>ราคารวม: ${price2.toFixed(1)} บ.</p>
+          <p>ราคา/ก.: ${unitPrice2.toFixed(2)} บ.</p>
         `;
         
         // Determine which is cheaper
@@ -504,8 +458,8 @@
           progressContainer.style.display = 'block';
           
           if (unitPrice1 < unitPrice2) {
-            const savingsPercent = ((unitPrice2 - unitPrice1) / unitPrice2 * 100).toFixed(2);
-            winnerHTML = `<div class="winner pulse">สินค้าที่ 1 ถูกกว่า (ประหยัดกว่า ${savingsPercent}%)</div>`;
+            const savingsPercent = ((unitPrice2 - unitPrice1) / unitPrice2 * 100).toFixed(0);
+            winnerHTML = `<div class="winner">สินค้าที่ 1 ถูกกว่า ${savingsPercent}%</div>`;
             
             // Set initial width
             progressBar.style.width = '0%';
@@ -522,8 +476,8 @@
             }, 200);
             
           } else if (unitPrice2 < unitPrice1) {
-            const savingsPercent = ((unitPrice1 - unitPrice2) / unitPrice1 * 100).toFixed(2);
-            winnerHTML = `<div class="winner pulse">สินค้าที่ 2 ถูกกว่า (ประหยัดกว่า ${savingsPercent}%)</div>`;
+            const savingsPercent = ((unitPrice1 - unitPrice2) / unitPrice1 * 100).toFixed(0);
+            winnerHTML = `<div class="winner">สินค้าที่ 2 ถูกกว่า ${savingsPercent}%</div>`;
             
             // Set initial width
             progressBar.style.width = '0%';
@@ -544,28 +498,18 @@
             progressContainer.style.display = 'none';
           }
         } else {
-          winnerHTML = `<div class="draw">กรุณากรอกข้อมูลน้ำหนักและราคาให้ครบถ้วน</div>`;
+          winnerHTML = `<div class="draw">กรุณากรอกข้อมูลให้ครบ</div>`;
           progressContainer.style.display = 'none';
         }
         
         document.getElementById('winner-result').innerHTML = winnerHTML;
         
         // Show results
-        const resultsElement = document.getElementById('results');
-        resultsElement.style.display = 'block';
+        document.getElementById('results').style.display = 'block';
         
         // Hide loader
         hideLoader();
-        
-        // Scroll to results after a small delay
-        setTimeout(() => {
-          resultsElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          
-          // Show the recalculate button after scrolling down
-          document.getElementById('recalculate-btn').style.display = 'flex';
-        }, 300);
-        
-      }, 600); // Loading time in milliseconds
+      }, 500); // Reduced loading time for better UX
     }
     
     // Function to animate progress value
@@ -587,27 +531,6 @@
       
       window.requestAnimationFrame(step);
     }
-    
-    // Function to scroll back to the top
-    function scrollToTop() {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      document.getElementById('recalculate-btn').style.display = 'none';
-    }
-    
-    // Listen for scroll to show/hide the recalculate button
-    window.addEventListener('scroll', function() {
-      const resultsElement = document.getElementById('results');
-      if (resultsElement.style.display === 'block') {
-        const rect = resultsElement.getBoundingClientRect();
-        const recalculateBtn = document.getElementById('recalculate-btn');
-        
-        if (rect.top < 0) {
-          recalculateBtn.style.display = 'flex';
-        } else {
-          recalculateBtn.style.display = 'none';
-        }
-      }
-    });
   </script>
 </body>
 </html>
