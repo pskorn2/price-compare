@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>เครื่องคำนวณเปรียบเทียบราคา</title>
+  <style>
+    /* Minimal Pastel Design */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Prompt', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    
+    body {
+      background-color: #f8f9fa;
+      color: #4a5568;
+      padding: 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    
+    .container {
+      max-width: 600px;
+      width: 100%;
+      background-color: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      padding: 32px;
+    }
+    
+    h1 {
+      color: #718096;
+      font-size: 1.5rem;
+      text-align: center;
+      margin-bottom: 24px;
+      font-weight: 500;
+    }
+    
+    .comparison-form {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+    
+    .item-card {
+      background-color: #f7fafc;
+      border-radius: 12px;
+      padding: 24px;
+      border: 1px solid #edf2f7;
+    }
+    
+    .item-card h2 {
+      color: #81a1c1;
+      font-size: 1.2rem;
+      margin-bottom: 16px;
+      font-weight: 500;
+    }
+    
+    .form-group {
+      margin-bottom: 16px;
+    }
+    
+    .form-row {
+      display: flex;
+      gap: 12px;
+    }
+    
+    .form-row .form-group {
+      flex: 1;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #718096;
+      font-size: 0.9rem;
+    }
+    
+    input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      background-color: #fff;
+      transition: all 0.2s;
+    }
+    
+    input:focus {
+      outline: none;
+      border-color: #a3bffa;
+      box-shadow: 0 0 0 3px rgba(163, 191, 250, 0.2);
+    }
+    
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #b5c7e3;
+      color: #2d3748;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-weight: 500;
+    }
+    
+    button:hover {
+      background-color: #a3bffa;
+    }
+    
+    .results {
+      margin-top: 24px;
+      padding: 24px;
+      border-radius: 12px;
+      background-color: #f7fafc;
+      display: none;
+      border: 1px solid #edf2f7;
+    }
+    
+    .results h2 {
+      color: #81a1c1;
+      font-size: 1.2rem;
+      margin-bottom: 16px;
+      font-weight: 500;
+    }
+    
+    .result-card {
+      display: flex;
+      gap: 24px;
+      margin-bottom: 20px;
+    }
+    
+    .result-item {
+      flex: 1;
+      padding: 16px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+    
+    .result-item p {
+      margin-bottom: 8px;
+    }
+    
+    .result-item p:first-child {
+      font-weight: 500;
+      color: #4a5568;
+    }
+    
+    .winner {
+      padding: 12px;
+      background-color: #e6fffa;
+      color: #319795;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: 500;
+      margin-top: 16px;
+      animation: fadeInUp 0.5s ease-out forwards;
+    }
+    
+    .draw {
+      padding: 12px;
+      background-color: #fff8dc;
+      color: #d69e2e;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: 500;
+      margin-top: 16px;
+      animation: fadeInUp 0.5s ease-out forwards;
+    }
+    
+    .progress-container {
+      width: 100%;
+      background-color: #edf2f7;
+      border-radius: 8px;
+      margin-top: 16px;
+      height: 12px;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .progress-bar {
+      height: 100%;
+      background-color: #9ae6b4;
+      width: 0%;
+      border-radius: 8px;
+      position: relative;
+      transition: width 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    
+    .progress-bar::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(
+        90deg,
+        transparent 25%,
+        rgba(255, 255, 255, 0.3) 50%,
+        transparent 75%
+      );
+      background-size: 200% 100%;
+      animation: progress-shine 2s linear infinite;
+    }
+    
+    .progress-value {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 10px;
+      font-weight: 600;
+      color: #4a5568;
+      z-index: 1;
+      text-shadow: 0 0 2px #fff;
+    }
+    
+    @keyframes progress-shine {
+      from {
+        background-position: 200% 0;
+      }
+      to {
+        background-position: 0 0;
+      }
+    }
+    
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    /* Animated pulse for winner box */
+    .winner.pulse {
+      animation: pulsate 2s infinite;
+    }
+    
+    @keyframes pulsate {
+      0% {
+        box-shadow: 0 0 0 0 rgba(49, 151, 149, 0.4);
+      }
+      70% {
+        box-shadow: 0 0 0 8px rgba(49, 151, 149, 0);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(49, 151, 149, 0);
+      }
+    }
+    
+    /* Loader */
+    .loader-container {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.8);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    
+    .loader {
+      display: inline-block;
+      position: relative;
+      width: 64px;
+      height: 64px;
+    }
+    
+    .loader div {
+      position: absolute;
+      top: 27px;
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      animation-timing-function: cubic-bezier(0, 1, 1, 0);
+    }
+    
+    .loader div:nth-child(1) {
+      left: 6px;
+      background-color: #fbd38d;
+      animation: loader1 0.6s infinite;
+    }
+    
+    .loader div:nth-child(2) {
+      left: 6px;
+      background-color: #9ae6b4;
+      animation: loader2 0.6s infinite;
+    }
+    
+    .loader div:nth-child(3) {
+      left: 26px;
+      background-color: #b5c7e3;
+      animation: loader2 0.6s infinite;
+    }
+    
+    .loader div:nth-child(4) {
+      left: 45px;
+      background-color: #f687b3;
+      animation: loader3 0.6s infinite;
+    }
+    
+    @keyframes loader1 {
+      0% { transform: scale(0); }
+      100% { transform: scale(1); }
+    }
+    
+    @keyframes loader2 {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(19px, 0); }
+    }
+    
+    @keyframes loader3 {
+      0% { transform: scale(1); }
+      100% { transform: scale(0); }
+    }
+    
+    @media (max-width: 640px) {
+      .container {
+        padding: 20px;
+      }
+      
+      .result-card {
+        flex-direction: column;
+        gap: 16px;
+      }
+      
+      .form-row {
+        flex-direction: column;
+      }
+    }
+    
+    @media (min-width: 641px) {
+      .comparison-form {
+        flex-direction: row;
+      }
+      
+      .item-card {
+        flex: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="loader-container" id="loader">
+    <div class="loader">
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  </div>
+  
+  <div class="container">
+    <h1>เปรียบเทียบราคาสินค้า</h1>
+    
+    <div class="comparison-form">
+      <div class="item-card">
+        <h2>สินค้าที่ 1</h2>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="weight1">น้ำหนัก (กรัม)</label>
+            <input type="number" id="weight1" placeholder="น้ำหนัก" min="0" step="0.01">
+          </div>
+          <div class="form-group">
+            <label for="quantity1">ปริมาณ (ชิ้น)</label>
+            <input type="number" id="quantity1" placeholder="ปริมาณ" value="1" min="1" step="1">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="price1">ราคา (บาท)</label>
+          <input type="number" id="price1" placeholder="ราคา" min="0" step="0.01">
+        </div>
+      </div>
+      
+      <div class="item-card">
+        <h2>สินค้าที่ 2</h2>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="weight2">น้ำหนัก (กรัม)</label>
+            <input type="number" id="weight2" placeholder="น้ำหนัก" min="0" step="0.01">
+          </div>
+          <div class="form-group">
+            <label for="quantity2">ปริมาณ (ชิ้น)</label>
+            <input type="number" id="quantity2" placeholder="ปริมาณ" value="1" min="1" step="1">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="price2">ราคา (บาท)</label>
+          <input type="number" id="price2" placeholder="ราคา" min="0" step="0.01">
+        </div>
+      </div>
+    </div>
+    
+    <button onclick="calculateComparison()">เปรียบเทียบราคา</button>
+    
+    <div class="results" id="results">
+      <h2>ผลการเปรียบเทียบ</h2>
+      
+      <div class="result-card">
+        <div class="result-item" id="item1-result"></div>
+        <div class="result-item" id="item2-result"></div>
+      </div>
+      
+      <div id="winner-result"></div>
+      <div id="progress-container" class="progress-container" style="display: none;">
+        <div id="progress-bar" class="progress-bar"></div>
+        <div id="progress-value" class="progress-value">0%</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function showLoader() {
+      document.getElementById('loader').style.display = 'flex';
+    }
+    
+    function hideLoader() {
+      document.getElementById('loader').style.display = 'none';
+    }
+    
+    function calculateComparison() {
+      // Show loader
+      showLoader();
+      
+      // Simulate loading time
+      setTimeout(() => {
+        // Get input values
+        const weight1 = parseFloat(document.getElementById('weight1').value) || 0;
+        const quantity1 = parseInt(document.getElementById('quantity1').value) || 1;
+        const price1 = parseFloat(document.getElementById('price1').value) || 0;
+        
+        const weight2 = parseFloat(document.getElementById('weight2').value) || 0;
+        const quantity2 = parseInt(document.getElementById('quantity2').value) || 1;
+        const price2 = parseFloat(document.getElementById('price2').value) || 0;
+        
+        // Calculate unit prices (price per gram)
+        const totalWeight1 = weight1 * quantity1;
+        const totalWeight2 = weight2 * quantity2;
+        
+        const unitPrice1 = totalWeight1 > 0 ? price1 / totalWeight1 : 0;
+        const unitPrice2 = totalWeight2 > 0 ? price2 / totalWeight2 : 0;
+        
+        // Display results with 4 decimal places
+        document.getElementById('item1-result').innerHTML = `
+          <p>สินค้าที่ 1</p>
+          <p>น้ำหนักรวม: ${totalWeight1.toFixed(2)} กรัม</p>
+          <p>ราคารวม: ${price1.toFixed(2)} บาท</p>
+          <p>ราคาต่อกรัม: ${unitPrice1.toFixed(4)} บาท</p>
+        `;
+        
+        document.getElementById('item2-result').innerHTML = `
+          <p>สินค้าที่ 2</p>
+          <p>น้ำหนักรวม: ${totalWeight2.toFixed(2)} กรัม</p>
+          <p>ราคารวม: ${price2.toFixed(2)} บาท</p>
+          <p>ราคาต่อกรัม: ${unitPrice2.toFixed(4)} บาท</p>
+        `;
+        
+        // Determine which is cheaper
+        let winnerHTML = '';
+        const progressContainer = document.getElementById('progress-container');
+        const progressBar = document.getElementById('progress-bar');
+        const progressValue = document.getElementById('progress-value');
+        
+        // Reset progress bar first
+        progressBar.style.width = '0%';
+        progressContainer.style.display = 'none';
+        
+        if (unitPrice1 > 0 && unitPrice2 > 0) {
+          progressContainer.style.display = 'block';
+          
+          if (unitPrice1 < unitPrice2) {
+            const savingsPercent = ((unitPrice2 - unitPrice1) / unitPrice2 * 100).toFixed(2);
+            winnerHTML = `<div class="winner pulse">สินค้าที่ 1 ถูกกว่า (ประหยัดกว่า ${savingsPercent}%)</div>`;
+            
+            // Set initial width
+            progressBar.style.width = '0%';
+            progressValue.innerText = '0%';
+            
+            // Animate progress bar after a slight delay
+            setTimeout(() => {
+              const progressWidth = Math.min(savingsPercent, 100);
+              progressBar.style.width = `${progressWidth}%`;
+              progressBar.style.backgroundColor = '#9ae6b4';
+              
+              // Update progress value with animation
+              animateProgressValue(0, progressWidth, 1000);
+            }, 200);
+            
+          } else if (unitPrice2 < unitPrice1) {
+            const savingsPercent = ((unitPrice1 - unitPrice2) / unitPrice1 * 100).toFixed(2);
+            winnerHTML = `<div class="winner pulse">สินค้าที่ 2 ถูกกว่า (ประหยัดกว่า ${savingsPercent}%)</div>`;
+            
+            // Set initial width
+            progressBar.style.width = '0%';
+            progressValue.innerText = '0%';
+            
+            // Animate progress bar after a slight delay
+            setTimeout(() => {
+              const progressWidth = Math.min(savingsPercent, 100);
+              progressBar.style.width = `${progressWidth}%`;
+              progressBar.style.backgroundColor = '#9ae6b4';
+              
+              // Update progress value with animation
+              animateProgressValue(0, progressWidth, 1000);
+            }, 200);
+            
+          } else {
+            winnerHTML = `<div class="draw">ทั้งสองสินค้ามีราคาเท่ากัน</div>`;
+            progressContainer.style.display = 'none';
+          }
+        } else {
+          winnerHTML = `<div class="draw">กรุณากรอกข้อมูลน้ำหนักและราคาให้ครบถ้วน</div>`;
+          progressContainer.style.display = 'none';
+        }
+        
+        document.getElementById('winner-result').innerHTML = winnerHTML;
+        
+        // Show results
+        document.getElementById('results').style.display = 'block';
+        
+        // Hide loader
+        hideLoader();
+      }, 800); // Loading time in milliseconds
+    }
+    
+    // Function to animate progress value
+    function animateProgressValue(start, end, duration) {
+      const progressValue = document.getElementById('progress-value');
+      let startTimestamp = null;
+      
+      const step = (timestamp) => {
+        if (!startTimestamp) startTimestamp = timestamp;
+        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+        const currentValue = Math.floor(progress * (end - start) + start);
+        
+        progressValue.innerText = `${currentValue}%`;
+        
+        if (progress < 1) {
+          window.requestAnimationFrame(step);
+        }
+      };
+      
+      window.requestAnimationFrame(step);
+    }
+  </script>
+</body>
+</html>
