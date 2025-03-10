@@ -17,9 +17,6 @@
       background-color: #f8f9fa;
       color: #4a5568;
       padding: 16px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
       min-height: 100vh;
     }
     
@@ -29,45 +26,46 @@
       background-color: #fff;
       border-radius: 16px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-      padding: 32px;
+      padding: 24px 16px;
+      margin: 0 auto;
     }
     
     h1 {
       color: #718096;
-      font-size: 1.5rem;
+      font-size: 1.3rem;
       text-align: center;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
       font-weight: 500;
     }
     
     .comparison-form {
       display: flex;
       flex-direction: column;
-      gap: 24px;
-      margin-bottom: 24px;
+      gap: 16px;
+      margin-bottom: 20px;
     }
     
     .item-card {
       background-color: #f7fafc;
       border-radius: 12px;
-      padding: 24px;
+      padding: 16px;
       border: 1px solid #edf2f7;
     }
     
     .item-card h2 {
       color: #81a1c1;
-      font-size: 1.2rem;
-      margin-bottom: 16px;
+      font-size: 1.1rem;
+      margin-bottom: 12px;
       font-weight: 500;
     }
     
     .form-group {
-      margin-bottom: 16px;
+      margin-bottom: 12px;
     }
     
     .form-row {
       display: flex;
-      gap: 12px;
+      gap: 10px;
     }
     
     .form-row .form-group {
@@ -76,19 +74,20 @@
     
     label {
       display: block;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       color: #718096;
       font-size: 0.9rem;
     }
     
     input {
       width: 100%;
-      padding: 10px 12px;
+      padding: 12px 10px;
       border: 1px solid #e2e8f0;
       border-radius: 8px;
-      font-size: 0.95rem;
+      font-size: 1rem;
       background-color: #fff;
       transition: all 0.2s;
+      -webkit-appearance: none;
     }
     
     input:focus {
@@ -99,7 +98,7 @@
     
     button {
       width: 100%;
-      padding: 12px;
+      padding: 14px;
       background-color: #b5c7e3;
       color: #2d3748;
       border: none;
@@ -108,44 +107,48 @@
       cursor: pointer;
       transition: all 0.2s;
       font-weight: 500;
+      -webkit-appearance: none;
     }
     
-    button:hover {
+    button:hover, button:active {
       background-color: #a3bffa;
     }
     
     .results {
-      margin-top: 24px;
-      padding: 24px;
+      margin-top: 20px;
+      padding: 16px;
       border-radius: 12px;
       background-color: #f7fafc;
       display: none;
       border: 1px solid #edf2f7;
+      scroll-margin-top: 20px;
     }
     
     .results h2 {
       color: #81a1c1;
-      font-size: 1.2rem;
-      margin-bottom: 16px;
+      font-size: 1.1rem;
+      margin-bottom: 12px;
       font-weight: 500;
     }
     
     .result-card {
       display: flex;
-      gap: 24px;
-      margin-bottom: 20px;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 16px;
     }
     
     .result-item {
       flex: 1;
-      padding: 16px;
+      padding: 14px;
       background-color: #fff;
       border-radius: 8px;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     }
     
     .result-item p {
-      margin-bottom: 8px;
+      margin-bottom: 6px;
+      font-size: 0.95rem;
     }
     
     .result-item p:first-child {
@@ -329,22 +332,12 @@
       100% { transform: scale(0); }
     }
     
-    @media (max-width: 640px) {
-      .container {
-        padding: 20px;
-      }
-      
-      .result-card {
-        flex-direction: column;
-        gap: 16px;
-      }
-      
-      .form-row {
-        flex-direction: column;
-      }
-    }
-    
+    /* Responsive styles for mobile */
     @media (min-width: 641px) {
+      .container {
+        padding: 32px;
+      }
+      
       .comparison-form {
         flex-direction: row;
       }
@@ -352,6 +345,35 @@
       .item-card {
         flex: 1;
       }
+      
+      .result-card {
+        flex-direction: row;
+      }
+    }
+    
+    /* Add floating button for recalculation when scrolled down */
+    .recalculate-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background-color: #81a1c1;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      cursor: pointer;
+      z-index: 10;
+      display: none;
+      font-size: 20px;
+      transition: transform 0.2s;
+    }
+    
+    .recalculate-btn:active {
+      transform: scale(0.95);
     }
   </style>
 </head>
@@ -371,37 +393,33 @@
     <div class="comparison-form">
       <div class="item-card">
         <h2>สินค้าที่ 1</h2>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="weight1">น้ำหนัก (กรัม)</label>
-            <input type="number" id="weight1" placeholder="น้ำหนัก" min="0" step="0.01">
-          </div>
-          <div class="form-group">
-            <label for="quantity1">ปริมาณ (ชิ้น)</label>
-            <input type="number" id="quantity1" placeholder="ปริมาณ" value="1" min="1" step="1">
-          </div>
+        <div class="form-group">
+          <label for="weight1">น้ำหนัก (กรัม)</label>
+          <input type="number" id="weight1" placeholder="น้ำหนัก" min="0" step="0.01" inputmode="decimal">
+        </div>
+        <div class="form-group">
+          <label for="quantity1">ปริมาณ (ชิ้น)</label>
+          <input type="number" id="quantity1" placeholder="ปริมาณ" value="1" min="1" step="1" inputmode="numeric">
         </div>
         <div class="form-group">
           <label for="price1">ราคา (บาท)</label>
-          <input type="number" id="price1" placeholder="ราคา" min="0" step="0.01">
+          <input type="number" id="price1" placeholder="ราคา" min="0" step="0.01" inputmode="decimal">
         </div>
       </div>
       
       <div class="item-card">
         <h2>สินค้าที่ 2</h2>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="weight2">น้ำหนัก (กรัม)</label>
-            <input type="number" id="weight2" placeholder="น้ำหนัก" min="0" step="0.01">
-          </div>
-          <div class="form-group">
-            <label for="quantity2">ปริมาณ (ชิ้น)</label>
-            <input type="number" id="quantity2" placeholder="ปริมาณ" value="1" min="1" step="1">
-          </div>
+        <div class="form-group">
+          <label for="weight2">น้ำหนัก (กรัม)</label>
+          <input type="number" id="weight2" placeholder="น้ำหนัก" min="0" step="0.01" inputmode="decimal">
+        </div>
+        <div class="form-group">
+          <label for="quantity2">ปริมาณ (ชิ้น)</label>
+          <input type="number" id="quantity2" placeholder="ปริมาณ" value="1" min="1" step="1" inputmode="numeric">
         </div>
         <div class="form-group">
           <label for="price2">ราคา (บาท)</label>
-          <input type="number" id="price2" placeholder="ราคา" min="0" step="0.01">
+          <input type="number" id="price2" placeholder="ราคา" min="0" step="0.01" inputmode="decimal">
         </div>
       </div>
     </div>
@@ -423,6 +441,8 @@
       </div>
     </div>
   </div>
+  
+  <div class="recalculate-btn" id="recalculate-btn" onclick="scrollToTop()">↑</div>
 
   <script>
     function showLoader() {
@@ -531,11 +551,21 @@
         document.getElementById('winner-result').innerHTML = winnerHTML;
         
         // Show results
-        document.getElementById('results').style.display = 'block';
+        const resultsElement = document.getElementById('results');
+        resultsElement.style.display = 'block';
         
         // Hide loader
         hideLoader();
-      }, 800); // Loading time in milliseconds
+        
+        // Scroll to results after a small delay
+        setTimeout(() => {
+          resultsElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          
+          // Show the recalculate button after scrolling down
+          document.getElementById('recalculate-btn').style.display = 'flex';
+        }, 300);
+        
+      }, 600); // Loading time in milliseconds
     }
     
     // Function to animate progress value
@@ -557,6 +587,27 @@
       
       window.requestAnimationFrame(step);
     }
+    
+    // Function to scroll back to the top
+    function scrollToTop() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      document.getElementById('recalculate-btn').style.display = 'none';
+    }
+    
+    // Listen for scroll to show/hide the recalculate button
+    window.addEventListener('scroll', function() {
+      const resultsElement = document.getElementById('results');
+      if (resultsElement.style.display === 'block') {
+        const rect = resultsElement.getBoundingClientRect();
+        const recalculateBtn = document.getElementById('recalculate-btn');
+        
+        if (rect.top < 0) {
+          recalculateBtn.style.display = 'flex';
+        } else {
+          recalculateBtn.style.display = 'none';
+        }
+      }
+    });
   </script>
 </body>
 </html>
