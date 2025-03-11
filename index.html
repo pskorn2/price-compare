@@ -3,236 +3,381 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>เครื่องคำนวณเปรียบเทียบราคา</title>
+  <title>เปรียบเทียบราคาสินค้า</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
-    /* Compact Design */
+    /* Reset and Global Styles */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
       font-family: 'Prompt', -apple-system, BlinkMacSystemFont, sans-serif;
-      font-size: 14px;
     }
     
-    body {
-      background-color: #f8f9fa;
-      color: #4a5568;
-      min-height: 100vh;
-      padding: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    :root {
+      --primary-color: #6366f1;
+      --primary-light: #818cf8;
+      --primary-dark: #4f46e5;
+      --success-color: #10b981;
+      --success-light: #d1fae5;
+      --warning-color: #f59e0b;
+      --warning-light: #fef3c7;
+      --background-color: #f9fafb;
+      --card-color: #ffffff;
+      --text-primary: #1f2937;
+      --text-secondary: #6b7280;
+      --border-color: #e5e7eb;
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --header-height: 56px;
     }
     
-    .container {
-      max-width: 100%;
-      width: 100%;
-      background-color: #fff;
-      border-radius: 12px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-      padding: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    
-    h1 {
-      color: #718096;
-      font-size: 16px;
-      text-align: center;
-      margin-bottom: 8px;
-      font-weight: 500;
-    }
-    
-    .comparison-form {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-    }
-    
-    .item-card {
-      background-color: #f7fafc;
-      border-radius: 8px;
-      padding: 8px;
-      border: 1px solid #edf2f7;
-    }
-    
-    .item-card h2 {
-      color: #81a1c1;
-      font-size: 14px;
-      margin-bottom: 8px;
-      font-weight: 500;
-    }
-    
-    .form-group {
-      margin-bottom: 8px;
-    }
-    
-    .input-label {
-      display: flex;
-      gap: 4px;
-      align-items: center;
-      margin-bottom: 4px;
-    }
-    
-    .input-label label {
-      color: #718096;
-      font-size: 12px;
-      white-space: nowrap;
-    }
-    
-    input {
-      width: 100%;
-      padding: 6px 8px;
-      border: 1px solid #e2e8f0;
-      border-radius: 6px;
-      font-size: 12px;
-      background-color: #fff;
-    }
-    
-    button {
-      width: 100%;
-      padding: 8px;
-      background-color: #b5c7e3;
-      color: #2d3748;
-      border: none;
-      border-radius: 6px;
-      font-size: 14px;
-      cursor: pointer;
-      font-weight: 500;
-    }
-    
-    button:hover {
-      background-color: #a3bffa;
-    }
-    
-    .results {
-      padding: 8px;
-      border-radius: 8px;
-      background-color: #f7fafc;
-      border: 1px solid #edf2f7;
-      display: none;
-    }
-    
-    .results h2 {
-      color: #81a1c1;
-      font-size: 14px;
-      margin-bottom: 8px;
-      font-weight: 500;
-    }
-    
-    .result-card {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-bottom: 8px;
-    }
-    
-    .result-item {
-      padding: 8px;
-      background-color: #fff;
-      border-radius: 6px;
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-      font-size: 12px;
-    }
-    
-    .result-item p {
-      margin-bottom: 4px;
-      font-size: 12px;
-    }
-    
-    .result-item p:first-child {
-      font-weight: 500;
-    }
-    
-    .winner {
-      padding: 8px;
-      background-color: #e6fffa;
-      color: #319795;
-      border-radius: 6px;
-      text-align: center;
-      font-weight: 500;
-      margin-top: 8px;
-      animation: fadeInUp 0.5s ease-out forwards;
-    }
-    
-    .draw {
-      padding: 8px;
-      background-color: #fff8dc;
-      color: #d69e2e;
-      border-radius: 6px;
-      text-align: center;
-      font-weight: 500;
-      margin-top: 8px;
-      animation: fadeInUp 0.5s ease-out forwards;
-    }
-    
-    .progress-container {
-      width: 100%;
-      background-color: #edf2f7;
-      border-radius: 6px;
-      margin-top: 8px;
-      height: 8px;
-      overflow: hidden;
-      position: relative;
-    }
-    
-    .progress-bar {
+    html, body {
       height: 100%;
-      background-color: #9ae6b4;
-      width: 0%;
-      position: relative;
-      transition: width 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+      background-color: var(--background-color);
+      color: var(--text-primary);
+      overflow-x: hidden;
     }
     
-    .progress-bar::before {
-      content: '';
-      position: absolute;
+    /* Header */
+    .header {
+      height: var(--header-height);
+      position: fixed;
       top: 0;
       left: 0;
       right: 0;
+      background-color: var(--card-color);
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+    }
+    
+    .header h1 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+    
+    /* Main Content */
+    .main {
+      padding-top: calc(var(--header-height) + 16px);
+      padding-bottom: 24px;
+      min-height: 100%;
+    }
+    
+    .container {
+      padding: 0 16px;
+      max-width: 540px;
+      margin: 0 auto;
+    }
+    
+    /* Form Styles */
+    .tabs {
+      display: flex;
+      margin-bottom: 16px;
+      border-radius: var(--radius-md);
+      background-color: var(--card-color);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-color);
+    }
+    
+    .tab {
+      flex: 1;
+      padding: 12px 16px;
+      text-align: center;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s;
+      color: var(--text-secondary);
+      background-color: var(--card-color);
+      position: relative;
+    }
+    
+    .tab.active {
+      color: var(--primary-color);
+      background-color: var(--card-color);
+    }
+    
+    .tab.active:after {
+      content: '';
+      position: absolute;
       bottom: 0;
-      background: linear-gradient(
-        90deg,
-        transparent 25%,
-        rgba(255, 255, 255, 0.3) 50%,
-        transparent 75%
-      );
-      background-size: 200% 100%;
-      animation: progress-shine 2s linear infinite;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background-color: var(--primary-color);
+      border-radius: 2px 2px 0 0;
     }
     
-    @keyframes progress-shine {
-      from {
-        background-position: 200% 0;
-      }
-      to {
-        background-position: 0 0;
-      }
+    .tab-pane {
+      display: none;
     }
     
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    .tab-pane.active {
+      display: block;
+      animation: fadeIn 0.3s ease-out;
     }
     
-    /* Compact form layout for mobile */
+    .item-card {
+      background-color: var(--card-color);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-color);
+    }
+    
+    .item-card h2 {
+      display: flex;
+      align-items: center;
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    
+    .item-card h2 i {
+      margin-right: 8px;
+      color: var(--primary-color);
+    }
+    
+    .form-group {
+      margin-bottom: 16px;
+    }
+    
+    .form-group:last-child {
+      margin-bottom: 0;
+    }
+    
     .form-row {
       display: flex;
-      gap: 6px;
+      gap: 12px;
     }
     
     .form-row .form-group {
       flex: 1;
     }
     
-    /* Loader */
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+    
+    input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      font-size: 1rem;
+      background-color: var(--card-color);
+      transition: all 0.2s;
+      color: var(--text-primary);
+    }
+    
+    input:focus {
+      outline: none;
+      border-color: var(--primary-light);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+    }
+    
+    button {
+      width: 100%;
+      padding: 14px;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    button i {
+      margin-right: 8px;
+    }
+    
+    button:hover {
+      background-color: var(--primary-dark);
+      box-shadow: var(--shadow-md);
+    }
+    
+    /* Results Section */
+    .results {
+      margin-top: 24px;
+      display: none;
+    }
+    
+    .results h2 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+    }
+    
+    .results h2 i {
+      margin-right: 8px;
+      color: var(--primary-color);
+    }
+    
+    .result-card {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    
+    .result-item {
+      padding: 20px;
+      background-color: var(--card-color);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-color);
+      position: relative;
+    }
+    
+    .winner-badge {
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      background-color: var(--success-color);
+      color: white;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .result-item-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    
+    .result-item-header h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-left: 8px;
+    }
+    
+    .result-item-header i {
+      color: var(--primary-color);
+      font-size: 1.2rem;
+    }
+    
+    .result-item p {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+    }
+    
+    .result-item p span:first-child {
+      color: var(--text-secondary);
+    }
+    
+    .result-item p span:last-child {
+      font-weight: 500;
+    }
+    
+    .result-item p.highlight {
+      font-weight: 600;
+      color: var(--text-primary);
+      padding-top: 8px;
+      margin-top: 8px;
+      border-top: 1px dashed var(--border-color);
+    }
+    
+    .winner {
+      padding: 16px;
+      background-color: var(--success-light);
+      color: var(--success-color);
+      border-radius: var(--radius-md);
+      font-weight: 600;
+      margin-top: 16px;
+      animation: fadeInUp 0.5s ease-out forwards;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      display: flex;
+      align-items: center;
+    }
+    
+    .winner i {
+      margin-right: 8px;
+      font-size: 1.2rem;
+    }
+    
+    .draw {
+      padding: 16px;
+      background-color: var(--warning-light);
+      color: var(--warning-color);
+      border-radius: var(--radius-md);
+      font-weight: 600;
+      margin-top: 16px;
+      animation: fadeInUp 0.5s ease-out forwards;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid rgba(245, 158, 11, 0.2);
+      display: flex;
+      align-items: center;
+    }
+    
+    .draw i {
+      margin-right: 8px;
+      font-size: 1.2rem;
+    }
+    
+    .savings-container {
+      margin-top: 16px;
+    }
+    
+    .savings-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+    
+    .progress-container {
+      width: 100%;
+      background-color: var(--border-color);
+      border-radius: var(--radius-md);
+      height: 12px;
+      overflow: hidden;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+    
+    .progress-bar {
+      height: 100%;
+      background-color: var(--success-color);
+      width: 0%;
+      border-radius: var(--radius-md);
+      position: relative;
+      transition: width 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    
+    /* Loading Animation */
     .loader-container {
       display: none;
       position: fixed;
@@ -240,165 +385,193 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(255, 255, 255, 0.8);
+      background-color: rgba(255, 255, 255, 0.9);
       justify-content: center;
       align-items: center;
-      z-index: 1000;
+      z-index: 100;
+      backdrop-filter: blur(5px);
     }
     
     .loader {
-      display: inline-block;
-      position: relative;
-      width: 40px;
-      height: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
     }
     
-    .loader div {
-      position: absolute;
-      top: 15px;
-      width: 8px;
-      height: 8px;
+    .loader-spinner {
+      width: 48px;
+      height: 48px;
+      border: 5px solid rgba(99, 102, 241, 0.2);
+      border-top: 5px solid var(--primary-color);
       border-radius: 50%;
-      animation-timing-function: cubic-bezier(0, 1, 1, 0);
+      animation: spin 1s linear infinite;
     }
     
-    .loader div:nth-child(1) {
-      left: 4px;
-      background-color: #fbd38d;
-      animation: loader1 0.6s infinite;
+    .loader-text {
+      color: var(--primary-color);
+      font-weight: 500;
     }
     
-    .loader div:nth-child(2) {
-      left: 4px;
-      background-color: #9ae6b4;
-      animation: loader2 0.6s infinite;
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
     
-    .loader div:nth-child(3) {
-      left: 16px;
-      background-color: #b5c7e3;
-      animation: loader2 0.6s infinite;
+    /* Additional Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
     
-    .loader div:nth-child(4) {
-      left: 28px;
-      background-color: #f687b3;
-      animation: loader3 0.6s infinite;
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
     
-    @keyframes loader1 {
-      0% { transform: scale(0); }
-      100% { transform: scale(1); }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
     }
     
-    @keyframes loader2 {
-      0% { transform: translate(0, 0); }
-      100% { transform: translate(12px, 0); }
+    .winner-badge {
+      animation: bounce 1.5s infinite;
     }
     
-    @keyframes loader3 {
-      0% { transform: scale(1); }
-      100% { transform: scale(0); }
+    /* Reset Button */
+    .reset-button {
+      margin-top: 16px;
+      padding: 12px;
+      background-color: transparent;
+      color: var(--text-secondary);
+      border: 1px solid var(--border-color);
+      box-shadow: none;
     }
     
-    #progress-value {
-      position: absolute;
-      right: 4px;
-      top: -5px;
-      font-size: 10px;
-      color: #4a5568;
-      background: rgba(255, 255, 255, 0.7);
-      padding: 0 4px;
-      border-radius: 8px;
+    .reset-button:hover {
+      background-color: #f3f4f6;
+      box-shadow: none;
     }
     
-    .hide-when-results {
-      transition: height 0.3s ease-out;
+    /* Bottom Padding for Fixed Header */
+    .bottom-space {
+      height: 32px;
     }
   </style>
 </head>
 <body>
   <div class="loader-container" id="loader">
     <div class="loader">
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
+      <div class="loader-spinner"></div>
+      <div class="loader-text">กำลังคำนวณ...</div>
     </div>
   </div>
   
-  <div class="container">
+  <header class="header">
     <h1>เปรียบเทียบราคาสินค้า</h1>
-    
-    <div class="comparison-form">
-      <div class="item-card">
-        <h2>สินค้าที่ 1</h2>
-        <div class="form-row">
-          <div class="form-group">
-            <div class="input-label">
-              <label for="weight1">น้ำหนัก(ก.)</label>
-            </div>
-            <input type="number" id="weight1" placeholder="น้ำหนัก" min="0" step="0.01">
-          </div>
-          <div class="form-group">
-            <div class="input-label">
-              <label for="quantity1">จำนวน</label>
-            </div>
-            <input type="number" id="quantity1" placeholder="จำนวน" value="1" min="1" step="1">
-          </div>
+  </header>
+  
+  <main class="main">
+    <div class="container">
+      <div class="tabs">
+        <div class="tab active" data-tab="form">
+          <i class="fas fa-calculator"></i> คำนวณ
         </div>
-        <div class="form-group">
-          <div class="input-label">
-            <label for="price1">ราคา(บาท)</label>
-          </div>
-          <input type="number" id="price1" placeholder="ราคา" min="0" step="0.01">
+        <div class="tab" data-tab="results" id="results-tab">
+          <i class="fas fa-chart-bar"></i> ผลลัพธ์
         </div>
       </div>
       
-      <div class="item-card">
-        <h2>สินค้าที่ 2</h2>
-        <div class="form-row">
-          <div class="form-group">
-            <div class="input-label">
-              <label for="weight2">น้ำหนัก(ก.)</label>
+      <div class="tab-pane active" id="form-pane">
+        <div class="item-card">
+          <h2><i class="fas fa-box"></i> สินค้าที่ 1</h2>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="weight1">น้ำหนัก (กรัม)</label>
+              <input type="number" id="weight1" placeholder="ระบุน้ำหนัก" min="0" step="0.01">
             </div>
-            <input type="number" id="weight2" placeholder="น้ำหนัก" min="0" step="0.01">
+            <div class="form-group">
+              <label for="quantity1">จำนวน (ชิ้น)</label>
+              <input type="number" id="quantity1" placeholder="ระบุจำนวน" value="1" min="1" step="1">
+            </div>
           </div>
           <div class="form-group">
-            <div class="input-label">
-              <label for="quantity2">จำนวน</label>
-            </div>
-            <input type="number" id="quantity2" placeholder="จำนวน" value="1" min="1" step="1">
+            <label for="price1">ราคา (บาท)</label>
+            <input type="number" id="price1" placeholder="ระบุราคา" min="0" step="0.01">
           </div>
         </div>
-        <div class="form-group">
-          <div class="input-label">
-            <label for="price2">ราคา(บาท)</label>
+        
+        <div class="item-card">
+          <h2><i class="fas fa-box"></i> สินค้าที่ 2</h2>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="weight2">น้ำหนัก (กรัม)</label>
+              <input type="number" id="weight2" placeholder="ระบุน้ำหนัก" min="0" step="0.01">
+            </div>
+            <div class="form-group">
+              <label for="quantity2">จำนวน (ชิ้น)</label>
+              <input type="number" id="quantity2" placeholder="ระบุจำนวน" value="1" min="1" step="1">
+            </div>
           </div>
-          <input type="number" id="price2" placeholder="ราคา" min="0" step="0.01">
+          <div class="form-group">
+            <label for="price2">ราคา (บาท)</label>
+            <input type="number" id="price2" placeholder="ระบุราคา" min="0" step="0.01">
+          </div>
+        </div>
+        
+        <button onclick="calculateComparison()"><i class="fas fa-calculator"></i> เปรียบเทียบราคา</button>
+      </div>
+      
+      <div class="tab-pane" id="results-pane">
+        <div class="results" id="results">
+          <h2><i class="fas fa-chart-pie"></i> ผลการเปรียบเทียบ</h2>
+          
+          <div class="result-card" id="result-cards">
+            <!-- Results will be inserted here -->
+          </div>
+          
+          <div id="winner-result"></div>
+          <div id="savings-container" class="savings-container" style="display: none;">
+            <div class="savings-label">
+              <span>ประหยัดได้</span>
+              <span id="savings-percent">0%</span>
+            </div>
+            <div class="progress-container">
+              <div id="progress-bar" class="progress-bar"></div>
+            </div>
+          </div>
+          
+          <button class="reset-button" onclick="resetForm()"><i class="fas fa-redo"></i> เริ่มใหม่</button>
         </div>
       </div>
+      
+      <div class="bottom-space"></div>
     </div>
-    
-    <button onclick="calculateComparison()" id="compare-button">เปรียบเทียบราคา</button>
-    
-    <div class="results" id="results">
-      <h2>ผลการเปรียบเทียบ</h2>
-      
-      <div class="result-card">
-        <div class="result-item" id="item1-result"></div>
-        <div class="result-item" id="item2-result"></div>
-      </div>
-      
-      <div id="winner-result"></div>
-      <div id="progress-container" class="progress-container" style="display: none;">
-        <div id="progress-bar" class="progress-bar"></div>
-        <div id="progress-value">0%</div>
-      </div>
-    </div>
-  </div>
+  </main>
 
   <script>
+    // Tab switching
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        // Remove active class from all tabs
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        // Add active class to clicked tab
+        tab.classList.add('active');
+        
+        // Hide all tab panes
+        document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+        // Show corresponding tab pane
+        const tabId = tab.getAttribute('data-tab');
+        document.getElementById(`${tabId}-pane`).classList.add('active');
+      });
+    });
+    
     function showLoader() {
       document.getElementById('loader').style.display = 'flex';
     }
@@ -408,20 +581,26 @@
     }
     
     function calculateComparison() {
+      // Form validation
+      const weight1 = parseFloat(document.getElementById('weight1').value);
+      const quantity1 = parseInt(document.getElementById('quantity1').value);
+      const price1 = parseFloat(document.getElementById('price1').value);
+      
+      const weight2 = parseFloat(document.getElementById('weight2').value);
+      const quantity2 = parseInt(document.getElementById('quantity2').value);
+      const price2 = parseFloat(document.getElementById('price2').value);
+      
+      // Check if all required fields are filled
+      if (isNaN(weight1) || isNaN(price1) || isNaN(weight2) || isNaN(price2)) {
+        alert('กรุณากรอกข้อมูลน้ำหนักและราคาให้ครบถ้วน');
+        return;
+      }
+      
       // Show loader
       showLoader();
       
       // Simulate loading time
       setTimeout(() => {
-        // Get input values
-        const weight1 = parseFloat(document.getElementById('weight1').value) || 1;
-        const quantity1 = parseInt(document.getElementById('quantity1').value) || 1;
-        const price1 = parseFloat(document.getElementById('price1').value) || 0;
-        
-        const weight2 = parseFloat(document.getElementById('weight2').value) || 1;
-        const quantity2 = parseInt(document.getElementById('quantity2').value) || 1;
-        const price2 = parseFloat(document.getElementById('price2').value) || 0;
-        
         // Calculate unit prices (price per gram)
         const totalWeight1 = weight1 * quantity1;
         const totalWeight2 = weight2 * quantity2;
@@ -429,77 +608,104 @@
         const unitPrice1 = totalWeight1 > 0 ? price1 / totalWeight1 : 0;
         const unitPrice2 = totalWeight2 > 0 ? price2 / totalWeight2 : 0;
         
-        // Display results with 2 decimal places to save space
-        document.getElementById('item1-result').innerHTML = `
-          <p>สินค้าที่ 1</p>
-          <p>น้ำหนัก: ${totalWeight1.toFixed(1)} ก.</p>
-          <p>ราคารวม: ${price1.toFixed(1)} บ.</p>
-          <p>ราคา/ก.: ${unitPrice1.toFixed(2)} บ.</p>
+        // Create results HTML
+        let resultsHTML = '';
+        
+        // Item 1 result card
+        resultsHTML += `
+          <div class="result-item" id="item1-result">
+            ${unitPrice1 < unitPrice2 ? '<div class="winner-badge"><i class="fas fa-check"></i></div>' : ''}
+            <div class="result-item-header">
+              <i class="fas fa-box"></i>
+              <h3>สินค้าที่ 1</h3>
+            </div>
+            <p>
+              <span>น้ำหนัก × จำนวน</span>
+              <span>${weight1.toFixed(2)} × ${quantity1} = ${totalWeight1.toFixed(2)} กรัม</span>
+            </p>
+            <p>
+              <span>ราคารวม</span>
+              <span>${price1.toFixed(2)} บาท</span>
+            </p>
+            <p class="highlight">
+              <span>ราคาต่อกรัม</span>
+              <span>${unitPrice1.toFixed(4)} บาท</span>
+            </p>
+          </div>
         `;
         
-        document.getElementById('item2-result').innerHTML = `
-          <p>สินค้าที่ 2</p>
-          <p>น้ำหนัก: ${totalWeight2.toFixed(1)} ก.</p>
-          <p>ราคารวม: ${price2.toFixed(1)} บ.</p>
-          <p>ราคา/ก.: ${unitPrice2.toFixed(2)} บ.</p>
+        // Item 2 result card
+        resultsHTML += `
+          <div class="result-item" id="item2-result">
+            ${unitPrice2 < unitPrice1 ? '<div class="winner-badge"><i class="fas fa-check"></i></div>' : ''}
+            <div class="result-item-header">
+              <i class="fas fa-box"></i>
+              <h3>สินค้าที่ 2</h3>
+            </div>
+            <p>
+              <span>น้ำหนัก × จำนวน</span>
+              <span>${weight2.toFixed(2)} × ${quantity2} = ${totalWeight2.toFixed(2)} กรัม</span>
+            </p>
+            <p>
+              <span>ราคารวม</span>
+              <span>${price2.toFixed(2)} บาท</span>
+            </p>
+            <p class="highlight">
+              <span>ราคาต่อกรัม</span>
+              <span>${unitPrice2.toFixed(4)} บาท</span>
+            </p>
+          </div>
         `;
+        
+        // Update result cards
+        document.getElementById('result-cards').innerHTML = resultsHTML;
         
         // Determine which is cheaper
         let winnerHTML = '';
-        const progressContainer = document.getElementById('progress-container');
+        const savingsContainer = document.getElementById('savings-container');
         const progressBar = document.getElementById('progress-bar');
-        const progressValue = document.getElementById('progress-value');
+        const savingsPercent = document.getElementById('savings-percent');
         
         // Reset progress bar first
         progressBar.style.width = '0%';
-        progressContainer.style.display = 'none';
+        savingsContainer.style.display = 'none';
         
         if (unitPrice1 > 0 && unitPrice2 > 0) {
-          progressContainer.style.display = 'block';
-          
           if (unitPrice1 < unitPrice2) {
-            const savingsPercent = ((unitPrice2 - unitPrice1) / unitPrice2 * 100).toFixed(0);
-            winnerHTML = `<div class="winner">สินค้าที่ 1 ถูกกว่า ${savingsPercent}%</div>`;
+            const savings = ((unitPrice2 - unitPrice1) / unitPrice2 * 100).toFixed(2);
+            winnerHTML = `<div class="winner"><i class="fas fa-trophy"></i> สินค้าที่ 1 คุ้มค่ากว่า</div>`;
             
-            // Set initial width
-            progressBar.style.width = '0%';
-            progressValue.innerText = '0%';
+            // Show savings progress bar
+            savingsContainer.style.display = 'block';
+            savingsPercent.textContent = `${savings}%`;
             
             // Animate progress bar after a slight delay
             setTimeout(() => {
-              const progressWidth = Math.min(savingsPercent, 100);
+              const progressWidth = Math.min(savings, 100);
               progressBar.style.width = `${progressWidth}%`;
-              progressBar.style.backgroundColor = '#9ae6b4';
-              
-              // Update progress value with animation
-              animateProgressValue(0, progressWidth, 1000);
             }, 200);
             
           } else if (unitPrice2 < unitPrice1) {
-            const savingsPercent = ((unitPrice1 - unitPrice2) / unitPrice1 * 100).toFixed(0);
-            winnerHTML = `<div class="winner">สินค้าที่ 2 ถูกกว่า ${savingsPercent}%</div>`;
+            const savings = ((unitPrice1 - unitPrice2) / unitPrice1 * 100).toFixed(2);
+            winnerHTML = `<div class="winner"><i class="fas fa-trophy"></i> สินค้าที่ 2 คุ้มค่ากว่า</div>`;
             
-            // Set initial width
-            progressBar.style.width = '0%';
-            progressValue.innerText = '0%';
+            // Show savings progress bar
+            savingsContainer.style.display = 'block';
+            savingsPercent.textContent = `${savings}%`;
             
             // Animate progress bar after a slight delay
             setTimeout(() => {
-              const progressWidth = Math.min(savingsPercent, 100);
+              const progressWidth = Math.min(savings, 100);
               progressBar.style.width = `${progressWidth}%`;
-              progressBar.style.backgroundColor = '#9ae6b4';
-              
-              // Update progress value with animation
-              animateProgressValue(0, progressWidth, 1000);
             }, 200);
             
           } else {
-            winnerHTML = `<div class="draw">ทั้งสองสินค้ามีราคาเท่ากัน</div>`;
-            progressContainer.style.display = 'none';
+            winnerHTML = `<div class="draw"><i class="fas fa-balance-scale"></i> ทั้งสองสินค้ามีราคาเท่ากัน</div>`;
+            savingsContainer.style.display = 'none';
           }
         } else {
-          winnerHTML = `<div class="draw">กรุณากรอกข้อมูลให้ครบ</div>`;
-          progressContainer.style.display = 'none';
+          winnerHTML = `<div class="draw"><i class="fas fa-exclamation-triangle"></i> ไม่สามารถคำนวณได้</div>`;
+          savingsContainer.style.display = 'none';
         }
         
         document.getElementById('winner-result').innerHTML = winnerHTML;
@@ -507,29 +713,26 @@
         // Show results
         document.getElementById('results').style.display = 'block';
         
+        // Switch to results tab
+        document.querySelector('.tab[data-tab="results"]').click();
+        
         // Hide loader
         hideLoader();
-      }, 500); // Reduced loading time for better UX
+      }, 800); // Loading time in milliseconds
     }
     
-    // Function to animate progress value
-    function animateProgressValue(start, end, duration) {
-      const progressValue = document.getElementById('progress-value');
-      let startTimestamp = null;
+    function resetForm() {
+      // Clear input fields
+      document.getElementById('weight1').value = '';
+      document.getElementById('quantity1').value = '1';
+      document.getElementById('price1').value = '';
       
-      const step = (timestamp) => {
-        if (!startTimestamp) startTimestamp = timestamp;
-        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-        const currentValue = Math.floor(progress * (end - start) + start);
-        
-        progressValue.innerText = `${currentValue}%`;
-        
-        if (progress < 1) {
-          window.requestAnimationFrame(step);
-        }
-      };
+      document.getElementById('weight2').value = '';
+      document.getElementById('quantity2').value = '1';
+      document.getElementById('price2').value = '';
       
-      window.requestAnimationFrame(step);
+      // Switch to form tab
+      document.querySelector('.tab[data-tab="form"]').click();
     }
   </script>
 </body>
